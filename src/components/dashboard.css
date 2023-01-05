@@ -1,0 +1,55 @@
+.dashboard form {
+  
+  flex-direction: column;
+  
+  display: flex;
+  justify-content: center; /* aligns items horizontally */
+  align-items: center; /* aligns items vertically */
+}
+
+header {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; /* centers items vertically */
+  background-color: #00b5ad;
+  color: white;
+  padding: 1rem;
+}
+
+
+header button:hover {
+  color: lightgray;
+}
+
+
+
+
+.dashboard label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard input[type="date"],
+.dashboard input[type="number"] {
+  width: 20%;
+  height: 2rem;
+  border: 1px solid gray;
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.dashboard button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #00b5ad;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.dashboard button:hover {
+  background-color: steelblue;
+}

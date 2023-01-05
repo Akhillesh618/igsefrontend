@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './login.css';
+  // eslint-disable-next-line
+import Dashboard from './dashboard';
+
 import axios from 'axios';
 const Login = () => {
   const [form, setForm] = useState({
@@ -12,7 +16,13 @@ const Login = () => {
     voucherCode: '',
   });
 
+ // const [hashedPassword, setHashedPassword] = useState('');
+
   const [isLoginForm, setIsLoginForm] = useState(true);
+   // eslint-disable-next-line
+  const [userToken, setUserToken] = useState(null);
+  let navigate = useNavigate();
+
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -24,9 +34,8 @@ const Login = () => {
     //Saving new User registration data in database 
 
     if(!isLoginForm){
+      
       event.preventDefault();
-      // console.log(form.email);
-      console.log("your in Reguster form")
       axios.post('http://localhost:5000/register', {
       name: form.name,
       email: form.email,
@@ -37,8 +46,9 @@ const Login = () => {
       voucherCode: form.voucherCode,
        })
         .then((response) => {
-         console.log(response);
-     })
+       //  console.log(response.data.title);
+         window.alert(response.data.title);
+      })
      .catch((error) => {
       console.log(error);
      });
@@ -46,8 +56,29 @@ const Login = () => {
     }
     else{
       event.preventDefault();
-      console.log("your in Login form")
+      //Performing Login Operations
+      axios.post('http://localhost:5000/login', {
+     
+      email: form.email,
+      password: form.password,
+       })
+        .then((response) => {
+         console.log(response.data);
+         setUserToken(response.data.token)
+         if(response.data.token){
+         // window.alert('User Login Successfully');;
 
+          navigate("/dashboard")
+
+        }
+        else{
+          console.log("Not able to login to UserDashboard");
+          window.alert('Incorrect Details');
+        }
+      })
+     .catch((error) => {
+      console.log(error);
+     });  
     }
   
   };

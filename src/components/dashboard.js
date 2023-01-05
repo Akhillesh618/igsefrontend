@@ -1,22 +1,89 @@
-import React from 'react';
-import './userdashboard.css';
-
+import React, { useState } from 'react';
+import './dashboard.css';
 import { useNavigate } from 'react-router-dom';
 
-function Dashboard() {
 
-    const navigate = useNavigate();
-    function handleLogout() {
-    // Perform logout actions (e.g. clear session data)
-    navigate('/login');
-}
-  
+function Dashboard() {
+  const [submissionDate, setSubmissionDate] = useState(new Date().toISOString().slice(0, 10));
+  const [electricityMeterReadingDay, setElectricityMeterReadingDay] = useState();
+  const [electricityMeterReadingNight, setElectricityMeterReadingNight] = useState();
+  const [gasMeterReading, setGasMeterReading] = useState();
+  const [userCredits, setusercredits] = useState(200);
+  let navigate = useNavigate();
+
+
+
+  const handelClick = (event) => {
+    //Logout
+    navigate("/")
+  }
+
+
+  const handelSubmit = (event) => {
+   //submiting the data 
+
+
+
+
+
+  }
   return (
-    <div>
-    <h1>Welcome to your dashboard</h1>
-    <p>Here you can view and manage your account information</p>
-    <button onClick={handleLogout}>Logout</button>
-  </div>
+    <div className="dashboard">
+    <header>
+      <h1 >Welcome to  Shangri-La Energy </h1>
+      <button onClick={handelClick}>Logout</button>
+      <label htmlFor="Your Available Credits">Your Available Credits : {userCredits} </label>
+    </header>
+
+      <form>
+        <label htmlFor="submission-date">Submission Date:</label>
+        <input
+          type="date"
+          id="submission-date"
+          value={submissionDate}
+          onChange={(e) => setSubmissionDate(e.target.value)}
+          required
+        />
+        
+        <br />
+        <label htmlFor="electricity-meter-reading-day">Electricity Meter Reading (Day):</label>
+        <input
+          type="number"
+          placeholder="(e.g. 100 kWh)"
+          id="electricity-meter-reading-day"
+          value={electricityMeterReadingDay}
+          onChange={(e) => setElectricityMeterReadingDay(e.target.value)}
+          required
+        />
+        <br />
+        <label htmlFor="electricity-meter-reading-night">Electricity Meter Reading (Night):</label>
+        <input
+          type="number"
+          placeholder="(e.g. 250 kWh)"
+          id="electricity-meter-reading-night"
+          value={electricityMeterReadingNight}
+          onChange={(e) => setElectricityMeterReadingNight(e.target.value)}
+          required
+        />
+        <br />
+        <label htmlFor="gas-meter-reading">Gas Meter Reading:</label>
+        <input
+          type="number"
+          id="gas-meter-reading"
+          placeholder="(e.g. 800 kWh)"
+          value={gasMeterReading}
+          onChange={(e) => setGasMeterReading(e.target.value)}
+          required
+        />
+       
+      <button onClick= {handelSubmit}>
+        Submit
+        
+      </button>
+      
+      </form>
+    </div>
+    
   );
 }
 

@@ -1,0 +1,24 @@
+.my-table {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+  
+  .my-table th {
+    background-color: #ddd;
+    border: 1px solid black;
+    padding: 8px;
+  }
+  
+  .my-table td {
+    border: 1px solid black;
+    padding: 8px;
+  }
+  
+  .my-table tr {
+    background-color: #f8f8f8;
+  }
+  
+  .my-table tr:hover {
+    background-color: #f2f2f2;
+  }
+  
