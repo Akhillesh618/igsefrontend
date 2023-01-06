@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import './dashboard.css';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+//import { getDefaultNormalizer } from '@testing-library/react';
 
 
 function Dashboard() {
@@ -9,6 +11,7 @@ function Dashboard() {
   const [electricityMeterReadingNight, setElectricityMeterReadingNight] = useState();
   const [gasMeterReading, setGasMeterReading] = useState();
   const [userCredits, setusercredits] = useState(200);
+  // const [userCredits] ="200";
   let navigate = useNavigate();
 
 
@@ -22,6 +25,24 @@ function Dashboard() {
   const handelSubmit = (event) => {
    //submiting the data 
 
+    event.preventDefault();
+      axios.post('http://localhost:5000/submitbill', {
+      
+     email: 'akhivvv@gmail.com',
+     credit: userCredits,
+     submission_date: submissionDate,
+     electricity_reading_Day: electricityMeterReadingDay,
+     electricity_reading_Night: electricityMeterReadingNight,
+     gas_reading: gasMeterReading,
+
+       })
+        .then((response) => {
+      //  console.log(response.data.title);
+       window.alert(response.data.title);
+      })
+     .catch((error) => {
+      console.log(error);
+     });
 
 
 

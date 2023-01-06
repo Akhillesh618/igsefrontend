@@ -32,6 +32,7 @@ const Login = () => {
   const handleFormSubmit = (event) => {
     
     //Saving new User registration data in database 
+    
 
     if(!isLoginForm){
       
