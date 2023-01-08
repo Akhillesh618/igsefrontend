@@ -2,52 +2,50 @@ import React, { useState } from 'react';
 import './dashboard.css';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-//import { getDefaultNormalizer } from '@testing-library/react';
+import { useEffect } from 'react';
+// import jwt from 'jsontokens';
 
 
-function Dashboard() {
+const Dashboard = () =>  {
+  
   const [submissionDate, setSubmissionDate] = useState(new Date().toISOString().slice(0, 10));
   const [electricityMeterReadingDay, setElectricityMeterReadingDay] = useState();
   const [electricityMeterReadingNight, setElectricityMeterReadingNight] = useState();
   const [gasMeterReading, setGasMeterReading] = useState();
-  const [userCredits, setusercredits] = useState(200);
-  // const [userCredits] ="200";
-  let navigate = useNavigate();
+  const [userCredits, setUserCredits] = useState(200);
+  const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   // console.log(JWT_SECRET);
+
+    
+  // }, [navigate, JWT_SECRET]);
 
 
 
-  const handelClick = (event) => {
-    //Logout
-    navigate("/")
+  const handelClick = () => {
+    navigate("/login");
   }
-
 
   const handelSubmit = (event) => {
-   //submiting the data 
-
     event.preventDefault();
-      axios.post('http://localhost:5000/submitbill', {
-      
-     email: 'akhivvv@gmail.com',
-     credit: userCredits,
-     submission_date: submissionDate,
-     electricity_reading_Day: electricityMeterReadingDay,
-     electricity_reading_Night: electricityMeterReadingNight,
-     gas_reading: gasMeterReading,
 
-       })
-        .then((response) => {
-      //  console.log(response.data.title);
-       window.alert(response.data.title);
+    axios.post('http://localhost:5000/submitbill', {
+      email: 'akhivvv@gmail.com',
+      credit: userCredits,
+      submission_date: submissionDate,
+      electricity_reading_day: electricityMeterReadingDay,
+      electricity_reading_night: electricityMeterReadingNight,
+      gas_reading: gasMeterReading
+    })
+      .then((response) => {
+        window.alert(response.data.title);
       })
-     .catch((error) => {
-      console.log(error);
-     });
-
-
-
-
+      .catch((error) => {
+        console.log(error);
+      });
   }
+
   return (
     <div className="dashboard">
     <header>

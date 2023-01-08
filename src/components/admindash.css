@@ -1,6 +1,7 @@
 .my-table {
     border: 1px solid black;
     border-collapse: collapse;
+     display: 'flex' 
   }
   
   .my-table th {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
+
   // eslint-disable-next-line
 import Dashboard from './dashboard';
 
@@ -17,6 +18,7 @@ const Login = () => {
   });
 
  // const [hashedPassword, setHashedPassword] = useState('');
+ 
 
   const [isLoginForm, setIsLoginForm] = useState(true);
    // eslint-disable-next-line
@@ -64,14 +66,14 @@ const Login = () => {
       password: form.password,
        })
         .then((response) => {
-         console.log(response.data);
          setUserToken(response.data.token)
-         if(response.data.token){
-         // window.alert('User Login Successfully');;
 
-          navigate("/dashboard")
-
+         if (response.data.token) {
+          localStorage.setItem('jwt', response.data.token);
+          console.log(localStorage.getItem("jwt"));
+          navigate('/dashboard', { replace: true });
         }
+
         else{
           console.log("Not able to login to UserDashboard");
           window.alert('Incorrect Details');
