@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
-
-  // eslint-disable-next-line
-import Dashboard from './dashboard';
-
 import axios from 'axios';
+import { useEffect } from 'react';
+
+
 const Login = () => {
+
+  useEffect(() => {
+    localStorage.clear();
+
+  })
+
+
+
+
+  // Define the state variables for the form input values and whether the login form or registration form is currently being displayed
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -16,81 +25,77 @@ const Login = () => {
     bedrooms: '',
     voucherCode: '',
   });
-
- // const [hashedPassword, setHashedPassword] = useState('');
- 
-
   const [isLoginForm, setIsLoginForm] = useState(true);
-   // eslint-disable-next-line
-  const [userToken, setUserToken] = useState(null);
+
+  // Fetch the `useNavigate` hook from `react-router-dom` to allow redirection to the dashboard page
   let navigate = useNavigate();
 
-
+  // Event handler for when the form input values are updated
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setForm({ ...form, [name]: value });
   };
 
+  // Event handler for when the form is submitted
   const handleFormSubmit = (event) => {
-    
-    //Saving new User registration data in database 
-    
+    event.preventDefault();
 
-    if(!isLoginForm){
-      
-      event.preventDefault();
+    // Check whether the login form or registration form is currently being displayed
+    if (!isLoginForm) {
+      // If the registration form is being displayed, make a post request to the server to register the user
       axios.post('http://localhost:5000/register', {
-      name: form.name,
-      email: form.email,
-      password: form.password,
-      address: form.address,
-      propertyType: form.propertyType,
-      bedrooms: form.bedrooms,
-      voucherCode: form.voucherCode,
-       })
-        .then((response) => {
-       //  console.log(response.data.title);
-         window.alert(response.data.title);
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        address: form.address,
+        propertyType: form.propertyType,
+        bedrooms: form.bedrooms,
+        voucherCode: form.voucherCode,
       })
-     .catch((error) => {
-      console.log(error);
-     });
-
-    }
-    else{
-      event.preventDefault();
-      //Performing Login Operations
+        .then((response) => {
+          window.alert(response.data.title);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      // If the login form is being displayed, make a post request to the server to login the user
       axios.post('http://localhost:5000/login', {
-     
-      email: form.email,
-      password: form.password,
-       })
-        .then((response) => {
-         setUserToken(response.data.token)
-
-         if (response.data.token) {
-          localStorage.setItem('jwt', response.data.token);
-          console.log(localStorage.getItem("jwt"));
-          navigate('/dashboard', { replace: true });
-        }
-
-        else{
-          console.log("Not able to login to UserDashboard");
-          window.alert('Incorrect Details');
-        }
+        email: form.email,
+        password: form.password,
       })
-     .catch((error) => {
-      console.log(error);
-     });  
+        .then((response) => {
+          // If the login request is successful, store the user's token in `localStorage` and redirect to the dashboard page
+         
+          localStorage.setItem('UserEmail', response.data.data[0].email);
+          localStorage.setItem('UserName', response.data.data[0].name);
+          localStorage.setItem('jwt', response.data.token  );
+          
+          console.log(localStorage);
+
+          navigate('/dashboard', { replace: true });
+        })
+        .catch((error) => {
+          console.log(error);
+          // If the login request is unsuccessful, display an alert message
+          window.alert('Incorrect Details');
+        });
     }
-  
   };
 
+  // Event handler for when the "switch to login/registration form" button is clicked
   const toggleForm = () => {
     setIsLoginForm(!isLoginForm);
   };
 
+
   return (
+    <>
+    <div className="video-background">
+      <video src={require("./media/video.mp4")} autoPlay muted loop />
+    </div>
+
+
     <div className="login-container">
       <form onSubmit={handleFormSubmit}>
         <h1>{isLoginForm ? 'Login' : 'Register'}</h1>
@@ -168,6 +173,8 @@ const Login = () => {
         </button>
       </form>
     </div>
+    </>
+
   );
 };
 

@@ -1,3 +1,21 @@
+.credits-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.credits-container label {
+  margin-right: 10px;
+}
+
+.credits-container button {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
 .dashboard form {
   
   flex-direction: column;
@@ -53,3 +71,4 @@ header button:hover {
 .dashboard button:hover {
   background-color: steelblue;
 }
+

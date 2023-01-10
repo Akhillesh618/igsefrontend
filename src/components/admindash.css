@@ -1,25 +1,57 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.container h2 {
+  margin-bottom: 20px;
+}
+
+.container label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.container input[type="number"] {
+  width: 50px;
+  margin-left: 10px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.container button {
+  background-color: #00b5ad;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
 .my-table {
-    border: 1px solid black;
-    border-collapse: collapse;
-     display: 'flex' 
-  }
-  
-  .my-table th {
-    background-color: #ddd;
-    border: 1px solid black;
-    padding: 8px;
-  }
-  
-  .my-table td {
-    border: 1px solid black;
-    padding: 8px;
-  }
-  
-  .my-table tr {
-    background-color: #f8f8f8;
-  }
-  
-  .my-table tr:hover {
-    background-color: #f2f2f2;
-  }
-  
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.my-table th,
+.my-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.my-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.my-table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #00b5ad;
+  color: white;
+}

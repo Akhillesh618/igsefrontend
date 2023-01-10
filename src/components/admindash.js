@@ -6,9 +6,9 @@ import './admindash.css';
 const Admindash = () => {
   const [data, setData] = useState([]);
   const [prices, setPrices] = useState({
-    electricityDay: 0.34,
-    electricityNight: 0.2,
-    gas: 0.1,
+    electricityDay: 0,
+    electricityNight: 0,
+    gas: 0,
     standingCharge: 0.74
   });
 
@@ -31,22 +31,30 @@ const Admindash = () => {
   };
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchUserBills() {
       const response = await axios.get('http://localhost:5000/userbills');
       setData(response.data);
       console.log('Api called');
     }
-    fetchData();
-
-    
-
-
-
+  
+    fetchUserBills();
+  
+    async function fetchPrices() {
+      const response = await axios.get('http://localhost:5000/getprices');
+      setPrices({
+        electricityDay: response.data[0].electricityDay,
+        electricityNight: response.data[0].electricityNight,
+        gas: response.data[0].gas
+      });
+    }
+  
+    fetchPrices();
   }, []);
+  
 
   return (
 
-    <div >
+    <div className="container" >
      <h2>Set Prices</h2>
       <label>
         Electricity (Day):
@@ -83,6 +91,7 @@ const Admindash = () => {
       <table className="my-table">
         <thead>
           <tr>
+            <th>Email</th>
             <th>Credit</th>
             <th>Submission Date</th>
             <th>Electricity (Day)</th>
@@ -93,6 +102,7 @@ const Admindash = () => {
         <tbody>
           {data.map(data => (
             <tr key={data._id}>
+              <td>{data.email}</td>
               <td>{data.credit}</td>
               <td>{data.submission_date}</td>
               <td>{data.electricity_reading_Day}</td>
@@ -102,24 +112,6 @@ const Admindash = () => {
           ))}
         </tbody>
       </table>
-      {/* <table className="my-table">
-        <thead>
-          <tr>
-            <th>Electricity (Day)</th>
-            <th>Electricity (Night)</th>
-            <th>Gas</th>
-            <th>Standing charge</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{prices.electricityDay}</td>
-            <td>{prices.electricityNight}</td>
-            <td>{prices.gas}</td>
-            <td>{prices.standingCharge}</td>
-          </tr>
-        </tbody>
-      </table> */}
     </div>
   );
 };
