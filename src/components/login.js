@@ -13,8 +13,6 @@ const Login = () => {
   })
 
 
-
-
   // Define the state variables for the form input values and whether the login form or registration form is currently being displayed
   const [form, setForm] = useState({
     email: '',
@@ -54,10 +52,17 @@ const Login = () => {
       })
         .then((response) => {
           window.alert(response.data.title);
+          setIsLoginForm(!isLoginForm);
+
         })
         .catch((error) => {
           console.log(error);
         });
+
+
+
+
+
     } else {
       // If the login form is being displayed, make a post request to the server to login the user
       axios.post('http://localhost:5000/login', {
@@ -69,6 +74,9 @@ const Login = () => {
          
           localStorage.setItem('UserEmail', response.data.data[0].email);
           localStorage.setItem('UserName', response.data.data[0].name);
+          localStorage.setItem('UserCredits', response.data.data[0].credits);
+
+
           localStorage.setItem('jwt', response.data.token  );
           
           console.log(localStorage);
@@ -92,13 +100,14 @@ const Login = () => {
   return (
     <>
     <div className="video-background">
-      <video src={require("./media/video.mp4")} autoPlay muted loop />
+      {/* <video src={require("./media/video.mp4")} autoPlay muted loop /> */}
     </div>
 
 
     <div className="login-container">
+    <div className="form-container">
       <form onSubmit={handleFormSubmit}>
-        <h1>{isLoginForm ? 'Login' : 'Register'}</h1>
+        <h1>{isLoginForm ? 'Shangri-La Energy' : 'Resident Registration in Shangri-La Energy'}</h1>
         {!isLoginForm && (
           <>
           <input
@@ -172,6 +181,7 @@ const Login = () => {
           {isLoginForm ? 'Need to register?' : 'Already have an account?'}
         </button>
       </form>
+      </div>
     </div>
     </>
 
@@ -179,3 +189,6 @@ const Login = () => {
 };
 
 export default Login;
+
+
+

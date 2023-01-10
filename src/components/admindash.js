@@ -11,6 +11,7 @@ const Admindash = () => {
     gas: 0,
     standingCharge: 0.74
   });
+  const [vouchercode, setVouchercode] = useState()
 
   const handlePriceChange = event => {
     setPrices({
@@ -18,6 +19,33 @@ const Admindash = () => {
       [event.target.name]: event.target.value
     });
   };
+
+  const handleSubmitVoucher = () => {
+    console.log(vouchercode)
+
+    if(vouchercode.length === 8) {
+
+      
+      axios.post(`http://localhost:5000/addvoucher`, { voucherCode: vouchercode })
+      .then(res => {
+        console.log(res.data.message);
+        if (res.status === 200) {
+          window.alert(res.data.message);
+        }
+        else {
+          window.alert("Failed to add Voucher");
+        }
+      })
+      .catch(error => {
+        console.log(error);
+        window.alert("Error Adding Voucher, Please try again later.");
+      });
+  } else {
+    window.alert("Enter correct Voucher code");
+  }
+    
+
+  }
 
   const handleSavePrices = () => {
     axios.post('http://localhost:5000/updaterates', prices)
@@ -85,8 +113,16 @@ const Admindash = () => {
           onChange={handlePriceChange}
         />
       </label>
-      <br />
       <button onClick={handleSavePrices}>Update New Prices</button>
+
+      <br />
+      
+      <label>
+    Voucher Code:
+    <input type="text" name="voucherCode" value={vouchercode} onChange={(e) => setVouchercode(e.target.value)}  />
+  </label>
+  <button onClick={handleSubmitVoucher}>Add new Voucher</button>
+  
     
       <table className="my-table">
         <thead>

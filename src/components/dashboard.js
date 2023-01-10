@@ -12,11 +12,13 @@ const Dashboard = () =>  {
   const [electricityMeterReadingDay, setElectricityMeterReadingDay] = useState();
   const [electricityMeterReadingNight, setElectricityMeterReadingNight] = useState();
   const [gasMeterReading, setGasMeterReading] = useState();
-  const [userCredits, setUserCredits] = useState(200);
+  // const [userCredits, setUserCredits] = useState(200);
   const navigate = useNavigate();
   const token = localStorage.getItem('jwt');
   const userEmail = localStorage.getItem('UserEmail');
   const UserName = localStorage.getItem('UserName');
+  const Credit = localStorage.getItem('UserCredits');
+
   const [prices, setPrices] = useState({
     electricityDay: 0,
     electricityNight: 0,
@@ -41,7 +43,6 @@ const Dashboard = () =>  {
       navigate("/login");
     }
 
-
   }, [token, navigate]);
 
 
@@ -58,7 +59,7 @@ const Dashboard = () =>  {
 
     axios.post('http://localhost:5000/submitbill', {
       email: userEmail,
-      credit: userCredits,
+      credit: Credit,
       submission_date: submissionDate,
       electricity_reading_Day: electricityMeterReadingDay,
       electricity_reading_Night: electricityMeterReadingNight,
@@ -81,7 +82,7 @@ const Dashboard = () =>  {
       Hello {UserName}
     </label>
     <label htmlFor="Your Available Credits">
-      Your Available Credits: {userCredits}
+      Your Available Credits: {Credit}
     </label>
 
     <button onClick={handelClick}>Logout</button>
