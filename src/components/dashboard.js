@@ -3,6 +3,7 @@ import './dashboard.css';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect } from 'react';
+
 // import jwt from 'jsontokens';
 
 
@@ -12,7 +13,7 @@ const Dashboard = () =>  {
   const [electricityMeterReadingDay, setElectricityMeterReadingDay] = useState();
   const [electricityMeterReadingNight, setElectricityMeterReadingNight] = useState();
   const [gasMeterReading, setGasMeterReading] = useState();
-  // const [userCredits, setUserCredits] = useState(200);
+  const [Billdata, setData] = useState([]);
   const navigate = useNavigate();
   const token = localStorage.getItem('jwt');
   const userEmail = localStorage.getItem('UserEmail');
@@ -24,11 +25,89 @@ const Dashboard = () =>  {
     electricityNight: 0,
     gas: 0
   });
+  
+
+  const Reading1 = [{
+    "_id": "63bcd0894c1f9049c0a073a4",
+    "credit": "200",
+    "email": "akhivvv@gmail.com",
+    "submission_date": "2023-01-10",
+    "electricity_reading_Day": "100",
+    "electricity_reading_Night": "250",
+    "gas_reading": "800",
+    "__v": 0
+  }]
+  const Reading2 = [{
+    "_id": "63bd9543457d9e064ce2068f",
+    "credit": "200",
+    "email": "av202@student.le.ac.uk",
+    "submission_date": "2023-01-28",
+    "electricity_reading_Day": "200",
+    "electricity_reading_Night": "500",
+    "gas_reading": "1600",
+    "__v": 0
+  }]
 
 
+  // eslint-disable-next-line
+  function calculateEnergyBill(currentReading, previousReading, rates) {
+    // Extract the values from the input
+    const currentElectricityDay = currentReading[0].electricity_reading_Day;
+    const currentElectricityNight = currentReading[0].electricity_reading_Night;
+    const currentGas = currentReading[0].gas_reading;
+    const previousElectricityDay = previousReading[0].electricity_reading_Day;
+    const previousElectricityNight = previousReading[0].electricity_reading_Night;
+    const previousGas = previousReading[0].gas_reading;
+    const date = currentReading[0].submission_date;
+    const previousDate = previousReading[0].submission_date;
+    const electricityDayRate = rates.electricityDay;
+    const electricityNightRate = rates.electricityNight;
+    const gasRate = rates.gas;
+    const standingCharge = 0.74;
+  
+    // Calculate the number of units used for electricity
+    const electricityUsage = {
+      day: currentElectricityDay - previousElectricityDay,
+      night: currentElectricityNight - previousElectricityNight
+    };
+  
+    // Calculate the number of units used for gas
+    const gasUsage = currentGas - previousGas;
+  
+    // Calculate the number of days in the billing period
+
+    const date1 = new Date(date);
+    const date2 = new Date(previousDate);
+
+    const timeDiff = Math.abs(date2.getTime() - date1.getTime());
+    const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+    console.log(`Days: ${diffDays}`);
+    const billingPeriod = diffDays;
+    // (date - previousDate) / (24 * 60 * 60 * 1000);
+  
+    // Calculate the usage charge
+    const usageCharge = (electricityUsage.day * electricityDayRate) + (electricityUsage.night * electricityNightRate) + (gasUsage * gasRate);
+  
+    // Calculate the standing charge
+    const standingChargeCost = billingPeriod * standingCharge;
+    
+    // Calculate the total bill
+    const bill = usageCharge + standingChargeCost;
+    return bill;
+  }
 
 
   useEffect(() => {
+
+    async function fetchUserBills() {
+      const response = await axios.get('http://localhost:5000/userbills');
+      setData(response.data);
+      console.log('Api called');
+    }
+  
+    fetchUserBills();
+
     async function fetchData() {
       const response = await axios.get('http://localhost:5000/getprices');
       setPrices({
@@ -54,7 +133,11 @@ const Dashboard = () =>  {
   }
 
 
-  const handelSubmit = (event) => {
+  const handelSubmit = (event) => { 
+    console.log(calculateEnergyBill(Reading2, Reading1, prices))
+
+    console.log(Reading1[0].submission_date)
+
     event.preventDefault();
 
     axios.post('http://localhost:5000/submitbill', {
@@ -89,8 +172,38 @@ const Dashboard = () =>  {
   </div>
 </header>
 
+<div className="card">
+   <table className="my-table">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Credit</th>
+            <th>Submission Date</th>
+            <th>Electricity (Day)</th>
+            <th>Electricity (Night)</th>
+            <th>Gas</th>
+          </tr>
+        </thead>
+        <tbody>
+  {Billdata
+    .filter(data => data.email === userEmail)
+    .map(data => (
+      <tr key={data._id}>
+        <td>{data.email}</td>
+        <td>{data.credit}</td>
+        <td>{data.submission_date}</td>
+        <td>{data.electricity_reading_Day}</td>
+        <td>{data.electricity_reading_Night}</td>
+        <td>{data.gas_reading}</td>
+      </tr>
+    ))}
+</tbody>
+      </table>
+</div>
+
       <form>
-        <label htmlFor="submission-date">Submission Date:</label>
+        <label htmlFor="Subbmit Your New Bill Here">Submit Your New Bill Here</label>
+        <br></br>
         <input
           type="date"
           id="submission-date"

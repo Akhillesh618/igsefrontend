@@ -79,12 +79,11 @@ const Login = () => {
 
           localStorage.setItem('jwt', response.data.token  );
           
-          console.log(localStorage);
+          // console.log(localStorage);
 
           navigate('/dashboard', { replace: true });
         })
         .catch((error) => {
-          console.log(error);
           // If the login request is unsuccessful, display an alert message
           window.alert('Incorrect Details');
         });
