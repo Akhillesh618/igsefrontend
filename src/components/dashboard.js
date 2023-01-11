@@ -19,6 +19,14 @@ const Dashboard = () =>  {
   const userEmail = localStorage.getItem('UserEmail');
   const UserName = localStorage.getItem('UserName');
   const Credit = localStorage.getItem('UserCredits');
+  const [pendingBills, setPendingBills] = useState([
+    {
+        _id: 1,
+        amount: '$120.50',
+        due_date: '2022-02-15',
+        is_paid: false
+    }
+]);
 
   const [prices, setPrices] = useState({
     electricityDay: 0,
@@ -132,6 +140,17 @@ const Dashboard = () =>  {
 
   }
 
+  const handlePayment = (event) => {
+    const id = event.target.id;
+    const updatedBills = pendingBills.map(bill => {
+        if(bill._id === id) {
+            bill.is_paid = !bill.is_paid;
+        }
+        return bill;
+    });
+    setPendingBills(updatedBills);
+}
+
 
   const handelSubmit = (event) => { 
     console.log(calculateEnergyBill(Reading2, Reading1, prices))
@@ -157,101 +176,144 @@ const Dashboard = () =>  {
   }
 
   return (
-    <div className="dashboard">
-    <header>
-  <h1>Welcome to Shangri-La Energy</h1>
-  <div className="credits-container">
-    <label htmlFor="User Name">
-      Hello {UserName}
-    </label>
-    <label htmlFor="Your Available Credits">
-      Your Available Credits: {Credit}
-    </label>
 
-    <button onClick={handelClick}>Logout</button>
+<div className="dashboard">
+  <header>
+    <h1>Welcome to Shangri-La Energy</h1>
+
+    <div className="credits-container">
+      <label htmlFor="User Name">
+        Hello {UserName}
+      </label>
+      <label htmlFor="Your Available Credits">
+        Your Available Credits: {Credit}
+      </label>
+      <button onClick={handelClick}>Logout</button>
+    </div>
+  </header>
+
+  <div className="card">
+    <table className="my-table">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Credit</th>
+          <th>Submission Date</th>
+          <th>Electricity (Day)</th>
+          <th>Electricity (Night)</th>
+          <th>Gas</th>
+        </tr>
+      </thead>
+      <tbody>
+        {Billdata
+          .filter(data => data.email === userEmail)
+          .map(data => (
+            <tr key={data._id}>
+              <td>{data.email}</td>
+              <td>{data.credit}</td>
+              <td>{data.submission_date}</td>
+              <td>{data.electricity_reading_Day}</td>
+              <td>{data.electricity_reading_Night}</td>
+              <td>{data.gas_reading}</td>
+            </tr>
+          ))}
+      </tbody>
+    </table>
+
+    <div className="pending-bills-container">
+      <form>
+        <label htmlFor="Pending Bills to Pay">Pending Bills to Pay</label>
+        <br />
+
+            <label >Bill Period from: </label>
+            <br />
+            <label>Amount: </label>
+            <br />
+            
+          
+        <button onClick={handlePayment}>Pay BIll</button>
+
+      </form>
+      
+    </div>
   </div>
-</header>
 
-<div className="card">
-   <table className="my-table">
-        <thead>
-          <tr>
-            <th>Email</th>
-            <th>Credit</th>
-            <th>Submission Date</th>
-            <th>Electricity (Day)</th>
-            <th>Electricity (Night)</th>
-            <th>Gas</th>
-          </tr>
-        </thead>
-        <tbody>
-  {Billdata
-    .filter(data => data.email === userEmail)
-    .map(data => (
-      <tr key={data._id}>
-        <td>{data.email}</td>
-        <td>{data.credit}</td>
-        <td>{data.submission_date}</td>
-        <td>{data.electricity_reading_Day}</td>
-        <td>{data.electricity_reading_Night}</td>
-        <td>{data.gas_reading}</td>
-      </tr>
-    ))}
-</tbody>
-      </table>
+  <form className="submit-bill-form">
+    <label htmlFor="Subbmit Your New Bill Here">Submit Your New Bill Here</label>
+    <br></br>
+    <input
+      type="date"
+      id="submission-date"
+      value={submissionDate}
+      onChange={e => setSubmissionDate(e.target.value)}
+      required
+    />
+
+    <br />
+    <label htmlFor="electricity-meter-reading-day"> 
+      Electricity Meter Reading (Day):  Price per kWh: {prices.electricityDay} 
+    </label>
+    <input
+      type="number"
+      placeholder="(e.g. 100 kWh)"
+      id="electricity-meter-reading-day"
+      value={electricityMeterReadingDay}
+      onChange={e => setElectricityMeterReadingDay(e.target.value)}
+      required
+    />
+    <br />
+    <label htmlFor="electricity-meter-reading-night">
+      Electricity Meter Reading (Night): Price per kWh: {prices.electricityNight}
+    </label>
+    <input
+      type="number"
+      placeholder="(e.g. 250 kWh)"
+      id="electricity-meter-reading-night"
+      value={electricityMeterReadingNight}
+      onChange={e => setElectricityMeterReadingNight(e.target.value)}
+      required
+    />
+    <br />
+    <label htmlFor="gas-meter-reading">
+      Gas Meter Reading: Price per kWh: {prices.gas}
+    </label>
+    <input
+      type="number"
+      placeholder="(e.g. 100 cubic meters)"
+      id="gas-meter-reading"
+      value={gasMeterReading}
+      onChange={e => setGasMeterReading(e.target.value)}
+      required
+    />
+    <br />
+    <button onClick={handelSubmit}>Submit</button>
+  </form>
 </div>
 
-      <form>
-        <label htmlFor="Subbmit Your New Bill Here">Submit Your New Bill Here</label>
-        <br></br>
-        <input
-          type="date"
-          id="submission-date"
-          value={submissionDate}
-          onChange={(e) => setSubmissionDate(e.target.value)}
-          required
-        />
-        
-        <br />
-        <label htmlFor="electricity-meter-reading-day">Electricity Meter Reading (Day):  Price per kWh: {prices.electricityDay} </label>
-        <input
-          type="number"
-          placeholder="(e.g. 100 kWh)"
-          id="electricity-meter-reading-day"
-          value={electricityMeterReadingDay}
-          onChange={(e) => setElectricityMeterReadingDay(e.target.value)}
-          required
-        />
-        <br />
-        <label htmlFor="electricity-meter-reading-night">Electricity Meter Reading (Night): Price per kWh: {prices.electricityNight}</label>
-        <input
-          type="number"
-          placeholder="(e.g. 250 kWh)"
-          id="electricity-meter-reading-night"
-          value={electricityMeterReadingNight}
-          onChange={(e) => setElectricityMeterReadingNight(e.target.value)}
-          required
-        />
-        <br />
-        <label htmlFor="gas-meter-reading">Gas Meter Reading: Price per kWh: {prices.gas}</label>
-        <input
-          type="number"
-          id="gas-meter-reading"
-          placeholder="(e.g. 800 kWh)"
-          value={gasMeterReading}
-          onChange={(e) => setGasMeterReading(e.target.value)}
-          required
-        />
-       <label htmlFor="gas-meter-reading">Your Total Billing Amount: </label>
-      <button onClick= {handelSubmit}>
-        Submit
-        
-      </button>
-      
-      </form>
-    </div>
     
   );
+
 }
 
 export default Dashboard;
+
+
+
+// <form>
+//  <label htmlFor="Pending Bills to Pay">Pending Bills to Pay</label>
+//  <br />
+//  {pendingBills.map(bill => (
+//   <div key={bill._id}>
+//     <label htmlFor={bill._id}>Bill {bill._id}</label>
+//     <br />
+//     <label htmlFor={`amount-${bill._id}`}>Amount: {bill.amount}</label>
+//     <br />
+//     <label htmlFor={`due_date-${bill._id}`}>Due Date: {bill.due_date}</label>
+//     <br />
+//     <input type="checkbox" id={bill._id} value={bill.is_paid} onChange={handlePayment} />
+//     <label htmlFor={bill._id}> Mark as paid</label>
+//     <br />
+//     <br />
+//   </div>
+// ))}
+// </form>
