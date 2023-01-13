@@ -9,7 +9,7 @@
 }
 
 .credits-container button {
-  background-color: #4caf50;
+  background-color: #3bc9c2;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -19,8 +19,6 @@
 
 .card {
   display:flexbox;
-  position: absolute;
-  left: 0;
   background-color: #ffffff;
   padding: 30px;
   border-radius: 10px;
@@ -29,6 +27,7 @@
 
 .my-table {
   flex: 2; /* This will make the table take up 2/3 of the available space */
+  box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.2);
 }
 
 .pending-bills-container {
@@ -36,13 +35,16 @@
   flex: 1; /* This will make the container take up the other 1/3 of the available space */
 }
 
-.dashboard form {
+.dashboard {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.dashboard-container form {
   flex-direction: column;
   display: flex;
   justify-content: center; /* aligns items horizontally */
   align-items: center; /* aligns items vertically */
-  position: absolute;
-  right: 0;
   background-color: #ffffff; /* to set background color of card */
   padding: 35px; /* to give space around the form's content */
   border-radius: 10px; /* to round the corners */
@@ -50,12 +52,15 @@
 }
 
 header {
+  width: 100%;
+  height: 15%;
   display: flex;
   justify-content: space-between; 
   align-items: center; /* centers items vertically */
   background-color: #00b5ad;
   color: white;
   padding: 1rem;
+  box-sizing: border-box;
 }
 
 
@@ -63,13 +68,13 @@ header button:hover {
   color: lightgray;
 }
 
-.dashboard label {
+.dashboard-container label {
   font-weight: bold;
   margin-bottom: 0.5rem;
 }
 
-.dashboard input[type="date"],
-.dashboard input[type="number"] {
+.dashboard-container input[type="date"],
+.dashboard-container input[type="number"] {
   width: 40%;
   height: 2rem;
   border: 1px solid gray;
@@ -78,7 +83,7 @@ header button:hover {
   font-size: 1rem;
 }
 
-.dashboard button {
+.dashboard-container button {
   margin-top: 1rem;
   padding: 0.5rem 1rem;
   background-color: #00b5ad;
@@ -89,6 +94,26 @@ header button:hover {
   cursor: pointer;
 }
 
-.dashboard button:hover {
+.dashboard-container button:hover {
   background-color: steelblue;
 }
+
+
+.dashboard-body {
+  width: 100%;
+  height: 85%;
+  display: grid;
+  grid-template-columns: 55% 17% 28%;
+}
+
+.dashboard-container {
+  box-sizing: border-box;
+  padding: 10px;
+}
+
+@media screen and (max-width: 1200px) {
+  .dashboard-body {
+    grid-template-columns: 100%;
+  }
+}
+
