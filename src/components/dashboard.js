@@ -35,30 +35,30 @@ const Dashboard = () => {
     electricityNight: 0,
     gas: 0,
   });
-
+  const generatedBill =0;
   const Reading1 = [
     {
-      _id: "63bcd0894c1f9049c0a073a4",
-      credit: "200",
-      email: "akhivvv@gmail.com",
-      submission_date: "2023-01-10",
-      electricity_reading_Day: "100",
-      electricity_reading_Night: "250",
-      gas_reading: "800",
-      __v: 0,
-    },
+      "_id": "63c1748e26a6f22c00ad0bde",
+      "billStatus": "Unpaid",
+      "email": "akhivvv@gmail.com",
+      "submission_date": "2023-05-17",
+      "electricity_reading_Day": "42",
+      "electricity_reading_Night": "23",
+      "gas_reading": "123",
+      "__v": 0
+  },
   ];
   const Reading2 = [
     {
-      _id: "63bd9543457d9e064ce2068f",
-      credit: "200",
-      email: "av202@student.le.ac.uk",
-      submission_date: "2023-01-28",
-      electricity_reading_Day: "200",
-      electricity_reading_Night: "500",
-      gas_reading: "1600",
-      __v: 0,
-    },
+      "_id": "63c1823326a6f22c00ad0be5",
+      "billStatus": "Unpaid",
+      "email": "akhivvv@gmail.com",
+      "submission_date": "2023-06-16",
+      "electricity_reading_Day": "85",
+      "electricity_reading_Night": "75",
+      "gas_reading": "296",
+      "__v": 0
+  },
   ];
 
   // eslint-disable-next-line
@@ -153,7 +153,8 @@ const Dashboard = () => {
   };
 
   const handelSubmit = (event) => {
-    console.log(calculateEnergyBill(Reading2, Reading1, prices));
+    generatedBill.data  = calculateEnergyBill(Reading2, Reading1, prices)
+    console.log(calculateEnergyBill(Reading2, Reading1, prices),generatedBill);
 
     console.log(Reading1[0].submission_date);
 
@@ -226,7 +227,7 @@ const Dashboard = () => {
 
             <label>Bill Period from: </label>
             <br />
-            <label>Amount: </label>
+            <label>Amount:{generatedBill} </label>
             <br />
 
             <button onClick={handlePayment}>Pay BIll</button>
@@ -296,135 +297,9 @@ const Dashboard = () => {
       
     </div>
 
-    // <div className="dashboard">
-    //   <header>
-    //     <h1>Welcome to Shangri-La Energy</h1>
-
-    //     <div className="credits-container">
-    //       <label htmlFor="User Name">Hello {UserName}</label>
-    //       <label htmlFor="Your Available Credits">
-    //         Your Available Credits: {Credit}
-    //       </label>
-    //       <button onClick={handelClick}>Logout</button>
-    //     </div>
-    //   </header>
-
-    //   <div className="card">
-    //     <table className="my-table">
-    //       <thead>
-    //         <tr>
-    //           <th>Email</th>
-    //           <th>BillStatus</th>
-    //           <th>Submission Date</th>
-    //           <th>Electricity (Day)</th>
-    //           <th>Electricity (Night)</th>
-    //           <th>Gas</th>
-    //         </tr>
-    //       </thead>
-    //       <tbody>
-    //         {Billdata.filter((data) => data.email === userEmail).map((data) => (
-    //           <tr key={data._id}>
-    //             <td>{data.email}</td>
-    //             <td>{data.billStatus}</td>
-    //             <td>{data.submission_date}</td>
-    //             <td>{data.electricity_reading_Day}</td>
-    //             <td>{data.electricity_reading_Night}</td>
-    //             <td>{data.gas_reading}</td>
-    //           </tr>
-    //         ))}
-    //       </tbody>
-    //     </table>
-
-    //     <div className="pending-bills-container">
-    //       <form>
-    //         <label htmlFor="Pending Bills to Pay">Pending Bills to Pay</label>
-    //         <br />
-
-    //         <label>Bill Period from: </label>
-    //         <br />
-    //         <label>Amount: </label>
-    //         <br />
-
-    //         <button onClick={handlePayment}>Pay BIll</button>
-    //       </form>
-    //     </div>
-    //   </div>
-
-    //   <form className="submit-bill-form">
-    //     <label htmlFor="Subbmit Your New Bill Here">
-    //       Submit Your New Bill Here
-    //     </label>
-    //     <br></br>
-    //     <input
-    //       type="date"
-    //       id="submission-date"
-    //       value={submissionDate}
-    //       onChange={(e) => setSubmissionDate(e.target.value)}
-    //       required
-    //     />
-
-    //     <br />
-    //     <label htmlFor="electricity-meter-reading-day">
-    //       Electricity Meter Reading (Day): Price per kWh:{" "}
-    //       {prices.electricityDay}
-    //     </label>
-    //     <input
-    //       type="number"
-    //       placeholder="(e.g. 100 kWh)"
-    //       id="electricity-meter-reading-day"
-    //       value={electricityMeterReadingDay}
-    //       onChange={(e) => setElectricityMeterReadingDay(e.target.value)}
-    //       required
-    //     />
-    //     <br />
-    //     <label htmlFor="electricity-meter-reading-night">
-    //       Electricity Meter Reading (Night): Price per kWh:{" "}
-    //       {prices.electricityNight}
-    //     </label>
-    //     <input
-    //       type="number"
-    //       placeholder="(e.g. 250 kWh)"
-    //       id="electricity-meter-reading-night"
-    //       value={electricityMeterReadingNight}
-    //       onChange={(e) => setElectricityMeterReadingNight(e.target.value)}
-    //       required
-    //     />
-    //     <br />
-    //     <label htmlFor="gas-meter-reading">
-    //       Gas Meter Reading: Price per kWh: {prices.gas}
-    //     </label>
-    //     <input
-    //       type="number"
-    //       placeholder="(e.g. 100 cubic meters)"
-    //       id="gas-meter-reading"
-    //       value={gasMeterReading}
-    //       onChange={(e) => setGasMeterReading(e.target.value)}
-    //       required
-    //     />
-    //     <br />
-    //     <button onClick={handelSubmit}>Submit</button>
-    //   </form>
-    // </div>
   );
 };
 
 export default Dashboard;
 
-// <form>
-//  <label htmlFor="Pending Bills to Pay">Pending Bills to Pay</label>
-//  <br />
-//  {pendingBills.map(bill => (
-//   <div key={bill._id}>
-//     <label htmlFor={bill._id}>Bill {bill._id}</label>
-//     <br />
-//     <label htmlFor={`amount-${bill._id}`}>Amount: {bill.amount}</label>
-//     <br />
-//     <label htmlFor={`due_date-${bill._id}`}>Due Date: {bill.due_date}</label>
-//     <br />
-//     <input type="checkbox" id={bill._id} value={bill.is_paid} onChange={handlePayment} />
-//     <label htmlFor={bill._id}> Mark as paid</label>
-//     <br />
-//     <br />
-//   </div>
-// ))}
-// </form>
+
