@@ -16,66 +16,39 @@ const Dashboard = () => {
     useState();
   const [gasMeterReading, setGasMeterReading] = useState();
   const [Billdata, setData] = useState([]);
+  const [CalculatedBill , setCalculatedBill] = useState();
   const navigate = useNavigate();
   const token = localStorage.getItem("jwt");
   const userEmail = localStorage.getItem("UserEmail");
   const UserName = localStorage.getItem("UserName");
   const Credit = localStorage.getItem("UserCredits");
-  const [pendingBills, setPendingBills] = useState([
-    {
-      _id: 1,
-      amount: "$120.50",
-      due_date: "2022-02-15",
-      is_paid: false,
-    },
-  ]);
-
   const [prices, setPrices] = useState({
     electricityDay: 0,
     electricityNight: 0,
     gas: 0,
   });
-  const generatedBill =0;
-  const Reading1 = [
-    {
-      "_id": "63c1748e26a6f22c00ad0bde",
-      "billStatus": "Unpaid",
-      "email": "akhivvv@gmail.com",
-      "submission_date": "2023-05-17",
-      "electricity_reading_Day": "42",
-      "electricity_reading_Night": "23",
-      "gas_reading": "123",
-      "__v": 0
-  },
-  ];
-  const Reading2 = [
-    {
-      "_id": "63c1823326a6f22c00ad0be5",
-      "billStatus": "Unpaid",
-      "email": "akhivvv@gmail.com",
-      "submission_date": "2023-06-16",
-      "electricity_reading_Day": "85",
-      "electricity_reading_Night": "75",
-      "gas_reading": "296",
-      "__v": 0
-  },
-  ];
+  
 
   // eslint-disable-next-line
-  function calculateEnergyBill(currentReading, previousReading, rates) {
+  function calculateEnergyBill(currentReading) {
+
+    currentReading= currentReading.filter((data) => data.email === userEmail)
+    const latestReadinng = currentReading[currentReading.length-1]
+    const secondlastReadinng = currentReading[currentReading.length-2]    
+    
     // Extract the values from the input
-    const currentElectricityDay = currentReading[0].electricity_reading_Day;
-    const currentElectricityNight = currentReading[0].electricity_reading_Night;
-    const currentGas = currentReading[0].gas_reading;
-    const previousElectricityDay = previousReading[0].electricity_reading_Day;
+    const currentElectricityDay = latestReadinng?.electricity_reading_Day;
+    const currentElectricityNight = latestReadinng?.electricity_reading_Night;
+    const currentGas = latestReadinng?.gas_reading;
+    const previousElectricityDay = secondlastReadinng?.electricity_reading_Day;
     const previousElectricityNight =
-      previousReading[0].electricity_reading_Night;
-    const previousGas = previousReading[0].gas_reading;
-    const date = currentReading[0].submission_date;
-    const previousDate = previousReading[0].submission_date;
-    const electricityDayRate = rates.electricityDay;
-    const electricityNightRate = rates.electricityNight;
-    const gasRate = rates.gas;
+      secondlastReadinng?.electricity_reading_Night;
+    const previousGas = secondlastReadinng?.gas_reading;
+    const date = latestReadinng?.submission_date;
+    const previousDate = secondlastReadinng?.submission_date;
+    const electricityDayRate = prices?.electricityDay;
+    const electricityNightRate = prices?.electricityNight;
+    const gasRate = prices?.gas;
     const standingCharge = 0.74;
 
     // Calculate the number of units used for electricity
@@ -95,7 +68,6 @@ const Dashboard = () => {
     const timeDiff = Math.abs(date2.getTime() - date1.getTime());
     const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
-    console.log(`Days: ${diffDays}`);
     const billingPeriod = diffDays;
     // (date - previousDate) / (24 * 60 * 60 * 1000);
 
@@ -110,18 +82,13 @@ const Dashboard = () => {
 
     // Calculate the total bill
     const bill = usageCharge + standingChargeCost;
-    return bill;
+    
+    setCalculatedBill(Math.round(bill))
   }
-
   useEffect(() => {
-    async function fetchUserBills() {
-      const response = await axios.get("http://localhost:5000/userbills");
-      setData(response.data);
-      console.log("Api called");
-    }
 
-    fetchUserBills();
-
+    console.log("useEffectRendered")   
+     
     async function fetchData() {
       const response = await axios.get("http://localhost:5000/getprices");
       setPrices({
@@ -131,32 +98,39 @@ const Dashboard = () => {
       });
     }
     fetchData();
+
+    async function fetchUserBills() {
+      const response = await axios.get("http://localhost:5000/userbills");
+      setData(response.data);
+      calculateEnergyBill(response.data)
+    }
+    fetchUserBills();
+
     if (!token) {
       navigate("/login");
     }
-  }, [token, navigate]);
+  }, [token, navigate,Billdata,calculateEnergyBill]);
+
 
   const handelClick = () => {
     localStorage.clear();
     navigate("/login");
   };
 
-  const handlePayment = (event) => {
-    const id = event.target.id;
-    const updatedBills = pendingBills.map((bill) => {
-      if (bill._id === id) {
-        bill.is_paid = !bill.is_paid;
-      }
-      return bill;
-    });
-    setPendingBills(updatedBills);
+
+  const handleBillPayment = () => {
+    //////////////////////////////////////////PAY BILL BUTTON click EVENT/////////////
+
+  
+
+
+
+
   };
 
   const handelSubmit = (event) => {
-    generatedBill.data  = calculateEnergyBill(Reading2, Reading1, prices)
-    console.log(calculateEnergyBill(Reading2, Reading1, prices),generatedBill);
 
-    console.log(Reading1[0].submission_date);
+    console.log(Billdata);
 
     event.preventDefault();
 
@@ -227,10 +201,9 @@ const Dashboard = () => {
 
             <label>Bill Period from: </label>
             <br />
-            <label>Amount:{generatedBill} </label>
+            <label>Amount: £ {CalculatedBill} </label>
             <br />
-
-            <button onClick={handlePayment}>Pay BIll</button>
+\            <button onClick={handleBillPayment}>Pay BIll</button>
           </form>
         </div>
       </div>
