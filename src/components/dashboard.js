@@ -15,40 +15,33 @@ const Dashboard = () => {
   const [electricityMeterReadingNight, setElectricityMeterReadingNight] =
     useState();
   const [gasMeterReading, setGasMeterReading] = useState();
-  const [Billdata, setData] = useState([]);
-  const [CalculatedBill , setCalculatedBill] = useState();
+  const [Billdata, setBillData] = useState([]);
+  const [CalculatedBill, setCalculatedBill] = useState("0");
   const navigate = useNavigate();
   const token = localStorage.getItem("jwt");
   const userEmail = localStorage.getItem("UserEmail");
   const UserName = localStorage.getItem("UserName");
   const Credit = localStorage.getItem("UserCredits");
-  const [prices, setPrices] = useState({
-    electricityDay: 0,
-    electricityNight: 0,
-    gas: 0,
-  });
-  
+  const [prices, setPrices] = useState([]);
 
   // eslint-disable-next-line
-  function calculateEnergyBill(currentReading) {
+  function calculateEnergyBill(currentReading, rates) {
+    currentReading = currentReading.filter((data) => data.email === userEmail);
+    const latestReadinng = currentReading[currentReading.length - 1];
+    const secondlastReadinng = currentReading[currentReading.length - 2];
 
-    currentReading= currentReading.filter((data) => data.email === userEmail)
-    const latestReadinng = currentReading[currentReading.length-1]
-    const secondlastReadinng = currentReading[currentReading.length-2]    
-    
     // Extract the values from the input
     const currentElectricityDay = latestReadinng?.electricity_reading_Day;
     const currentElectricityNight = latestReadinng?.electricity_reading_Night;
     const currentGas = latestReadinng?.gas_reading;
     const previousElectricityDay = secondlastReadinng?.electricity_reading_Day;
-    const previousElectricityNight =
-      secondlastReadinng?.electricity_reading_Night;
+    const previousElectricityNight = secondlastReadinng?.electricity_reading_Night;
     const previousGas = secondlastReadinng?.gas_reading;
     const date = latestReadinng?.submission_date;
     const previousDate = secondlastReadinng?.submission_date;
-    const electricityDayRate = prices?.electricityDay;
-    const electricityNightRate = prices?.electricityNight;
-    const gasRate = prices?.gas;
+    const electricityDayRate = rates?.electricityDay;
+    const electricityNightRate = rates?.electricityNight;
+    const gasRate = rates?.gas;
     const standingCharge = 0.74;
 
     // Calculate the number of units used for electricity
@@ -56,9 +49,10 @@ const Dashboard = () => {
       day: currentElectricityDay - previousElectricityDay,
       night: currentElectricityNight - previousElectricityNight,
     };
-
+    console.log("Electric",electricityUsage)
     // Calculate the number of units used for gas
     const gasUsage = currentGas - previousGas;
+    console.log("gasUsage",gasUsage)
 
     // Calculate the number of days in the billing period
 
@@ -70,67 +64,61 @@ const Dashboard = () => {
 
     const billingPeriod = diffDays;
     // (date - previousDate) / (24 * 60 * 60 * 1000);
+    console.log("billingPeriod",billingPeriod)
+
 
     // Calculate the usage charge
     const usageCharge =
       electricityUsage.day * electricityDayRate +
       electricityUsage.night * electricityNightRate +
       gasUsage * gasRate;
+      console.log("usageCharge",electricityDayRate)
+
 
     // Calculate the standing charge
     const standingChargeCost = billingPeriod * standingCharge;
 
     // Calculate the total bill
     const bill = usageCharge + standingChargeCost;
-    
-    setCalculatedBill(Math.round(bill))
-  }
-  useEffect(() => {
 
-    console.log("useEffectRendered")   
-     
+    setCalculatedBill(Math.round(bill));
+  }
+
+  useEffect(() => {
+    console.log("useEffectRendered");
+
     async function fetchData() {
       const response = await axios.get("http://localhost:5000/getprices");
-      setPrices({
-        electricityDay: response.data[0].electricityDay,
-        electricityNight: response.data[0].electricityNight,
-        gas: response.data[0].gas,
-      });
+      setPrices(response.data[0]);
     }
     fetchData();
 
     async function fetchUserBills() {
       const response = await axios.get("http://localhost:5000/userbills");
-      setData(response.data);
-      calculateEnergyBill(response.data)
+      setBillData(response.data);
+      // if(response.data){
+      //   calculateEnergyBill(response.data,prices)
+      // }
     }
     fetchUserBills();
 
     if (!token) {
       navigate("/login");
     }
-  }, [token, navigate,Billdata,calculateEnergyBill]);
-
+  }, [setPrices, setBillData, navigate, token]);
 
   const handelClick = () => {
     localStorage.clear();
     navigate("/login");
   };
 
-
   const handleBillPayment = () => {
     //////////////////////////////////////////PAY BILL BUTTON click EVENT/////////////
-
-  
-
-
-
-
   };
 
   const handelSubmit = (event) => {
-
     console.log(Billdata);
+    calculateEnergyBill(Billdata, prices)
 
     event.preventDefault();
 
@@ -194,85 +182,91 @@ const Dashboard = () => {
         </div>
 
         <div className="dashboard-container">
-        <div className="pending-bills-container">
-          <form>
-            <label htmlFor="Pending Bills to Pay">Pending Bills to Pay</label>
-            <br />
+          <div className="pending-bills-container">
+            <form>
+              <label htmlFor="Pending Bills to Pay">Pending Bills to Pay</label>
+              <br />
+              <label>Bill Period from: </label>
+              <br />
+              <label>Amount: £ {CalculatedBill} </label>
+              <br /> <button onClick={handleBillPayment}>Pay BIll</button>
+              <br />
+              <br />
 
-            <label>Bill Period from: </label>
+            
+            <input
+              type="number"
+              placeholder="EVC Code"
+              id="voucheradd"
+              value={electricityMeterReadingDay}
+              onChange={(e) => setElectricityMeterReadingDay(e.target.value)}
+              required
+            />
+            <button onClick={handleBillPayment}>Credit Top-up</button>
+
+            </form>
+          </div>
+        </div>
+
+        <div className="dashboard-container">
+          <form className="submit-bill-form">
+            <label htmlFor="Subbmit Your New Bill Here">
+              Submit Your New Bill Here
+            </label>
+            <br></br>
+            <input
+              type="date"
+              id="submission-date"
+              value={submissionDate}
+              onChange={(e) => setSubmissionDate(e.target.value)}
+              required
+            />
+
             <br />
-            <label>Amount: £ {CalculatedBill} </label>
+            <label htmlFor="electricity-meter-reading-day">
+              Electricity Meter Reading (Day): Price per kWh:{" "}
+              {prices.electricityDay}
+            </label>
+            <input
+              type="number"
+              placeholder="(e.g. 100 kWh)"
+              id="electricity-meter-reading-day"
+              value={electricityMeterReadingDay}
+              onChange={(e) => setElectricityMeterReadingDay(e.target.value)}
+              required
+            />
             <br />
-\            <button onClick={handleBillPayment}>Pay BIll</button>
+            <label htmlFor="electricity-meter-reading-night">
+              Electricity Meter Reading (Night): Price per kWh:{" "}
+              {prices.electricityNight}
+            </label>
+            <input
+              type="number"
+              placeholder="(e.g. 250 kWh)"
+              id="electricity-meter-reading-night"
+              value={electricityMeterReadingNight}
+              onChange={(e) => setElectricityMeterReadingNight(e.target.value)}
+              required
+            />
+            <br />
+            <label htmlFor="gas-meter-reading">
+              Gas Meter Reading: Price per kWh: {prices.gas}
+            </label>
+            <input
+              type="number"
+              placeholder="(e.g. 100 cubic meters)"
+              id="gas-meter-reading"
+              value={gasMeterReading}
+              onChange={(e) => setGasMeterReading(e.target.value)}
+              required
+            />
+            <br />
+            <button onClick={handelSubmit}>Submit</button>
           </form>
         </div>
       </div>
-
-      <div className="dashboard-container">
-        <form className="submit-bill-form">
-          <label htmlFor="Subbmit Your New Bill Here">
-            Submit Your New Bill Here
-          </label>
-          <br></br>
-          <input
-            type="date"
-            id="submission-date"
-            value={submissionDate}
-            onChange={(e) => setSubmissionDate(e.target.value)}
-            required
-          />
-
-          <br />
-          <label htmlFor="electricity-meter-reading-day">
-            Electricity Meter Reading (Day): Price per kWh:{" "}
-            {prices.electricityDay}
-          </label>
-          <input
-            type="number"
-            placeholder="(e.g. 100 kWh)"
-            id="electricity-meter-reading-day"
-            value={electricityMeterReadingDay}
-            onChange={(e) => setElectricityMeterReadingDay(e.target.value)}
-            required
-          />
-          <br />
-          <label htmlFor="electricity-meter-reading-night">
-            Electricity Meter Reading (Night): Price per kWh:{" "}
-            {prices.electricityNight}
-          </label>
-          <input
-            type="number"
-            placeholder="(e.g. 250 kWh)"
-            id="electricity-meter-reading-night"
-            value={electricityMeterReadingNight}
-            onChange={(e) => setElectricityMeterReadingNight(e.target.value)}
-            required
-          />
-          <br />
-          <label htmlFor="gas-meter-reading">
-            Gas Meter Reading: Price per kWh: {prices.gas}
-          </label>
-          <input
-            type="number"
-            placeholder="(e.g. 100 cubic meters)"
-            id="gas-meter-reading"
-            value={gasMeterReading}
-            onChange={(e) => setGasMeterReading(e.target.value)}
-            required
-          />
-          <br />
-          <button onClick={handelSubmit}>Submit</button>
-        </form>
-      </div>
-      
-      </div>
-
-      
     </div>
-
   );
 };
 
 export default Dashboard;
-
-
