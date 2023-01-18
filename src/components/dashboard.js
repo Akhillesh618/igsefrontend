@@ -88,13 +88,13 @@ const Dashboard = () => {
     console.log("useEffectRendered");
 
     async function fetchData() {
-      const response = await axios.get("http://localhost:5000/getprices");
+      const response = await axios.get("https://igse.herokuapp.com/getprices");
       setPrices(response.data[0]);
     }
     fetchData();
 
     async function fetchUserBills() {
-      const response = await axios.get("http://localhost:5000/userbills");
+      const response = await axios.get("https://igse.herokuapp.com/userbills");
       setBillData(response.data);
       // if(response.data){
       //   calculateEnergyBill(response.data,prices)
@@ -123,7 +123,7 @@ const Dashboard = () => {
     event.preventDefault();
 
     axios
-      .post("http://localhost:5000/submitbill", {
+      .post("https://igse.herokuapp.com/submitbill", {
         email: userEmail,
         submission_date: submissionDate,
         electricity_reading_Day: electricityMeterReadingDay,

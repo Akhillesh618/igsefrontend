@@ -26,7 +26,7 @@ const Admindash = () => {
     if(vouchercode.length === 8) {
 
       
-      axios.post(`http://localhost:5000/addvoucher`, { voucherCode: vouchercode })
+      axios.post(`https://igse.herokuapp.com/addvoucher`, { voucherCode: vouchercode })
       .then(res => {
         console.log(res.data.message);
         if (res.status === 200) {
@@ -48,7 +48,7 @@ const Admindash = () => {
   }
 
   const handleSavePrices = () => {
-    axios.post('http://localhost:5000/updaterates', prices)
+    axios.post('https://igse.herokuapp.com/updaterates', prices)
       .then(res => {
         console.log(res.status);
         
@@ -60,7 +60,7 @@ const Admindash = () => {
 
   useEffect(() => {
     async function fetchUserBills() {
-      const response = await axios.get('http://localhost:5000/userbills');
+      const response = await axios.get('https://igse.herokuapp.com/userbills');
       setData(response.data);
       console.log('Api called');
     }
@@ -68,7 +68,7 @@ const Admindash = () => {
     fetchUserBills();
   
     async function fetchPrices() {
-      const response = await axios.get('http://localhost:5000/getprices');
+      const response = await axios.get('https://igse.herokuapp.com/getprices');
       setPrices({
         electricityDay: response.data[0].electricityDay,
         electricityNight: response.data[0].electricityNight,

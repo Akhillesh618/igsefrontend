@@ -38,7 +38,7 @@ const Login = () => {
     if (!isLoginForm) {
       // If the registration form is being displayed, make a post request to the server to register the user
       axios
-        .post("http://localhost:5000/register", {
+        .post("https://igse.herokuapp.com/register", {
           name: form.name,
           email: form.email,
           password: form.password,
@@ -64,7 +64,7 @@ const Login = () => {
       }
 
       axios
-        .post("http://localhost:5000/login", {
+        .post("https://igse.herokuapp.com/login", {
           email: form.email,
           password: form.password,
         })
