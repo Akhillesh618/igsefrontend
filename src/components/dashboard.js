@@ -3,6 +3,7 @@ import "./dashboard.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect } from "react";
+import jwtDecode from "jwt-decode";
 
 // import jwt from 'jsontokens';
 
@@ -35,7 +36,8 @@ const Dashboard = () => {
     const currentElectricityNight = latestReadinng?.electricity_reading_Night;
     const currentGas = latestReadinng?.gas_reading;
     const previousElectricityDay = secondlastReadinng?.electricity_reading_Day;
-    const previousElectricityNight = secondlastReadinng?.electricity_reading_Night;
+    const previousElectricityNight =
+      secondlastReadinng?.electricity_reading_Night;
     const previousGas = secondlastReadinng?.gas_reading;
     const date = latestReadinng?.submission_date;
     const previousDate = secondlastReadinng?.submission_date;
@@ -49,10 +51,10 @@ const Dashboard = () => {
       day: currentElectricityDay - previousElectricityDay,
       night: currentElectricityNight - previousElectricityNight,
     };
-    console.log("Electric",electricityUsage)
+    console.log("Electric", electricityUsage);
     // Calculate the number of units used for gas
     const gasUsage = currentGas - previousGas;
-    console.log("gasUsage",gasUsage)
+    console.log("gasUsage", gasUsage);
 
     // Calculate the number of days in the billing period
 
@@ -64,16 +66,14 @@ const Dashboard = () => {
 
     const billingPeriod = diffDays;
     // (date - previousDate) / (24 * 60 * 60 * 1000);
-    console.log("billingPeriod",billingPeriod)
-
+    console.log("billingPeriod", billingPeriod);
 
     // Calculate the usage charge
     const usageCharge =
       electricityUsage.day * electricityDayRate +
       electricityUsage.night * electricityNightRate +
       gasUsage * gasRate;
-      console.log("usageCharge",electricityDayRate)
-
+    console.log("usageCharge", electricityDayRate);
 
     // Calculate the standing charge
     const standingChargeCost = billingPeriod * standingCharge;
@@ -86,6 +86,8 @@ const Dashboard = () => {
 
   useEffect(() => {
     console.log("useEffectRendered");
+    const decodedToken = jwtDecode(token);
+    console.log(decodedToken);
 
     async function fetchData() {
       const response = await axios.get("https://igse.herokuapp.com/getprices");
@@ -114,11 +116,26 @@ const Dashboard = () => {
 
   const handleBillPayment = () => {
     //////////////////////////////////////////PAY BILL BUTTON click EVENT/////////////
+
+    const newcredit = Credit - CalculatedBill;
+
+    axios
+      .put("http://localhost:5000/paybill", {
+        email: userEmail,
+        billvalue: CalculatedBill,
+        credit: newcredit,
+      })
+      .then((response) => {
+        window.alert(response);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   const handelSubmit = (event) => {
     console.log(Billdata);
-    calculateEnergyBill(Billdata, prices)
+    calculateEnergyBill(Billdata, prices);
 
     event.preventDefault();
 
@@ -192,18 +209,15 @@ const Dashboard = () => {
               <br /> <button onClick={handleBillPayment}>Pay BIll</button>
               <br />
               <br />
-
-            
-            <input
-              type="number"
-              placeholder="EVC Code"
-              id="voucheradd"
-              value={electricityMeterReadingDay}
-              onChange={(e) => setElectricityMeterReadingDay(e.target.value)}
-              required
-            />
-            <button onClick={handleBillPayment}>Credit Top-up</button>
-
+              <input
+                type="number"
+                placeholder="EVC Code"
+                id="voucheradd"
+                value={electricityMeterReadingDay}
+                onChange={(e) => setElectricityMeterReadingDay(e.target.value)}
+                required
+              />
+              <button onClick={handleBillPayment}>Credit Top-up</button>
             </form>
           </div>
         </div>

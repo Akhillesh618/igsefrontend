@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import "./login.css";
 import axios from "axios";
 import { useEffect } from "react";
+require('dotenv').config();
+const API_URL = process.env.API_URL;
+
 
 const Login = () => {
   useEffect(() => {
@@ -64,7 +67,7 @@ const Login = () => {
       }
 
       axios
-        .post("https://igse.herokuapp.com/login", {
+        .post(`${API_URL}/login`, {
           email: form.email,
           password: form.password,
         })
