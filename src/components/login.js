@@ -3,8 +3,12 @@ import { useNavigate } from "react-router-dom";
 import "./login.css";
 import axios from "axios";
 import { useEffect } from "react";
-require('dotenv').config();
-const API_URL = process.env.API_URL;
+// require('dotenv').config();
+// const API_URL = process.env.API_URL;
+// import env from "react-dotenv";
+
+const API_URL = process.env.REACT_APP_API_URL
+
 
 
 const Login = () => {
@@ -41,7 +45,7 @@ const Login = () => {
     if (!isLoginForm) {
       // If the registration form is being displayed, make a post request to the server to register the user
       axios
-        .post("https://igse.herokuapp.com/register", {
+        .post(`${API_URL}/register`, {
           name: form.name,
           email: form.email,
           password: form.password,

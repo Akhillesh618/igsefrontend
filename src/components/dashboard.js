@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect } from "react";
 import jwtDecode from "jwt-decode";
+const API_URL = process.env.REACT_APP_API_URL
 
 // import jwt from 'jsontokens';
 
@@ -11,6 +12,7 @@ const Dashboard = () => {
   const [submissionDate, setSubmissionDate] = useState(
     new Date().toISOString().slice(0, 10)
   );
+  const [addVoucher, SetaddVoucher]=useState();
   const [electricityMeterReadingDay, setElectricityMeterReadingDay] =
     useState();
   const [electricityMeterReadingNight, setElectricityMeterReadingNight] =
@@ -90,13 +92,13 @@ const Dashboard = () => {
     console.log(decodedToken);
 
     async function fetchData() {
-      const response = await axios.get("https://igse.herokuapp.com/getprices");
+      const response = await axios.get(`${API_URL}/getprices`);
       setPrices(response.data[0]);
     }
     fetchData();
 
     async function fetchUserBills() {
-      const response = await axios.get("https://igse.herokuapp.com/userbills");
+      const response = await axios.get(`${API_URL}/userbills`);
       setBillData(response.data);
       // if(response.data){
       //   calculateEnergyBill(response.data,prices)
@@ -114,13 +116,19 @@ const Dashboard = () => {
     navigate("/login");
   };
 
-  const handleBillPayment = () => {
+  const handelAddvoucher = () => {
+
+  }
+
+
+  const handleBillPayment = (event) => {
     //////////////////////////////////////////PAY BILL BUTTON click EVENT/////////////
+    event.preventDefault();
 
     const newcredit = Credit - CalculatedBill;
-
+    console.log(newcredit,CalculatedBill,userEmail);
     axios
-      .put("http://localhost:5000/paybill", {
+      .put(`${API_URL}/paybill`, {
         email: userEmail,
         billvalue: CalculatedBill,
         credit: newcredit,
@@ -134,13 +142,16 @@ const Dashboard = () => {
   };
 
   const handelSubmit = (event) => {
+
+    ////////////////SUBMIT BILL BUTTON////////////////////////
     console.log(Billdata);
     calculateEnergyBill(Billdata, prices);
 
     event.preventDefault();
+  
 
     axios
-      .post("https://igse.herokuapp.com/submitbill", {
+      .post(`${API_URL}/submitbill`, {
         email: userEmail,
         submission_date: submissionDate,
         electricity_reading_Day: electricityMeterReadingDay,
@@ -213,11 +224,10 @@ const Dashboard = () => {
                 type="number"
                 placeholder="EVC Code"
                 id="voucheradd"
-                value={electricityMeterReadingDay}
-                onChange={(e) => setElectricityMeterReadingDay(e.target.value)}
-                required
+                value={addVoucher}
+                onChange={(e) => SetaddVoucher(e.target.value)}
               />
-              <button onClick={handleBillPayment}>Credit Top-up</button>
+              <button onClick={handelAddvoucher}>Credit Top-up</button>
             </form>
           </div>
         </div>

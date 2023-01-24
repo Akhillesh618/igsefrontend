@@ -2,6 +2,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './admindash.css';
+const API_URL = process.env.REACT_APP_API_URL
 
 const Admindash = () => {
   const [data, setData] = useState([]);
@@ -26,7 +27,7 @@ const Admindash = () => {
     if(vouchercode.length === 8) {
 
       
-      axios.post(`https://igse.herokuapp.com/addvoucher`, { voucherCode: vouchercode })
+      axios.post(`${API_URL}/addvoucher`, { voucherCode: vouchercode })
       .then(res => {
         console.log(res.data.message);
         if (res.status === 200) {
@@ -48,7 +49,7 @@ const Admindash = () => {
   }
 
   const handleSavePrices = () => {
-    axios.post('https://igse.herokuapp.com/updaterates', prices)
+    axios.post(`${API_URL}/updaterates`, prices)
       .then(res => {
         console.log(res.status);
         
@@ -60,7 +61,7 @@ const Admindash = () => {
 
   useEffect(() => {
     async function fetchUserBills() {
-      const response = await axios.get('https://igse.herokuapp.com/userbills');
+      const response = await axios.get(`${API_URL}/userbills`);
       setData(response.data);
       console.log('Api called');
     }
@@ -68,7 +69,7 @@ const Admindash = () => {
     fetchUserBills();
   
     async function fetchPrices() {
-      const response = await axios.get('https://igse.herokuapp.com/getprices');
+      const response = await axios.get(`${API_URL}/getprices`);
       setPrices({
         electricityDay: response.data[0].electricityDay,
         electricityNight: response.data[0].electricityNight,
